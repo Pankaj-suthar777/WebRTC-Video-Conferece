@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
-export function LobbyPage() {
+export default function LobbyPage() {
   const [roomLink, setRoomLink] = useState("");
   const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState({ name: "", link: "" });
 
   const generateLink = () => {
     const roomId = generateUniqueRoomId();
@@ -16,6 +16,7 @@ export function LobbyPage() {
 
     const link = `${protocol}//${host}/room/${roomId}`;
     setRoomLink(link);
+    setError({ ...error, link: "" });
     return link;
   };
 
@@ -25,7 +26,16 @@ export function LobbyPage() {
     );
   };
 
-  const createRoomHandler = () => {};
+  const createRoomHandler = () => {
+    if (name.length === 0) {
+      setError({ ...error, name: "Name is required field" });
+      return;
+    }
+    if (!roomLink) {
+      setError({ ...error, link: "Please generate room link first" });
+      return;
+    }
+  };
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -47,13 +57,14 @@ export function LobbyPage() {
                 type="name"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError({ ...error, name: "" });
+                }}
               />
+              {error.name && <p className="text-red-500">{error.name}</p>}
             </div>
             <div className="grid gap-2">
-              {/* <div className="flex items-center">
-                <Label htmlFor="name">Generate link to share</Label>
-              </div> */}
               <Button
                 variant="outline"
                 className="w-full"
@@ -62,6 +73,7 @@ export function LobbyPage() {
                 Generate link
               </Button>
             </div>
+            {error.link && <p className="text-red-500">{error.link}</p>}
             {roomLink && (
               <div className="sm:w-[450px] w-[330px]">
                 <CodeClipboard roomLink={roomLink} />
@@ -71,8 +83,8 @@ export function LobbyPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled
               onClick={createRoomHandler}
+              disabled={!roomLink || !name}
             >
               Create room and join
             </Button>
@@ -83,8 +95,6 @@ export function LobbyPage() {
         <img
           src="/medium.webp"
           alt="Image"
-          width="1920"
-          height="1080"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
