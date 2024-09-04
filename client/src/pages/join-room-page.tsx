@@ -1,20 +1,54 @@
+import { SocketRoomResponse } from "@/@types/socket-room-info";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useSocket } from "@/context/SocketProvider";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 export default function JoinRoomPage() {
   const { roomId } = useParams();
+  const [searchParams] = useSearchParams();
+  const yourName = searchParams.get("yourName");
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [error, setError] = useState({ name: "" });
 
-  const JoinRoomHandler = () => {
+  const socket = useSocket();
+
+  const JoinRoomHandler = useCallback(() => {
     if (name.length === 0) {
       setError({ ...error, name: "Name is required field" });
       return;
     }
-  };
+    socket.emit("room:join", { name, room: roomId });
+  }, [error, name, roomId, socket]);
+
+  const handleJoinRoom = useCallback(
+    (data: SocketRoomResponse) => {
+      const { room, name } = data;
+      navigate(`/call-room/${room}`, { state: { name } });
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    socket.on("room:join", handleJoinRoom);
+
+    return () => {
+      socket.off("room:join", handleJoinRoom);
+    };
+  }, [handleJoinRoom, socket]);
+
+  useEffect(() => {
+    if (yourName && roomId) {
+      navigate(`/call-room/${roomId}`, {
+        state: {
+          yourName,
+        },
+      });
+    }
+  }, [yourName, navigate, roomId]);
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">

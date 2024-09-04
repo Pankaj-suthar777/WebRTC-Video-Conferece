@@ -1,41 +1,56 @@
+import { SocketRoomResponse } from "@/@types/socket-room-info";
 import CodeClipboard from "@/components/layout/code-clipboard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useSocket } from "@/context/SocketProvider";
+import { generateUniqueRoomId } from "@/utils/helper";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LobbyPage() {
-  const [roomLink, setRoomLink] = useState("");
+  const [roomId, setRoomId] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState({ name: "", link: "" });
 
-  const generateLink = () => {
+  const socket = useSocket();
+  const navigate = useNavigate();
+
+  const generateLink = useCallback(() => {
     const roomId = generateUniqueRoomId();
-    const protocol = window.location.protocol;
-    const host = window.location.host;
 
-    const link = `${protocol}//${host}/room/${roomId}`;
-    setRoomLink(link);
+    setRoomId(roomId);
     setError({ ...error, link: "" });
-    return link;
-  };
+    return roomId;
+  }, [error]);
 
-  const generateUniqueRoomId = () => {
-    return "xxxxxxx".replace(/[x]/g, () =>
-      Math.floor(Math.random() * 26).toString(16)
-    );
-  };
-
-  const createRoomHandler = () => {
+  const createRoomHandler = useCallback(() => {
     if (name.length === 0) {
       setError({ ...error, name: "Name is required field" });
       return;
     }
-    if (!roomLink) {
+    if (!roomId) {
       setError({ ...error, link: "Please generate room link first" });
       return;
     }
-  };
+
+    socket.emit("room:join", { name, room: generateLink() });
+  }, [error, generateLink, name, roomId, socket]);
+
+  const handleJoinRoom = useCallback(
+    (data: SocketRoomResponse) => {
+      const { room, name } = data;
+      navigate(`/room/${room}?yourName=${name}`);
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    socket.on("room:join", handleJoinRoom);
+    return () => {
+      socket.off("room:join", handleJoinRoom);
+    };
+  }, [socket, handleJoinRoom]);
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -74,9 +89,9 @@ export default function LobbyPage() {
               </Button>
             </div>
             {error.link && <p className="text-red-500">{error.link}</p>}
-            {roomLink && (
+            {roomId && (
               <div className="sm:w-[450px] w-[330px]">
-                <CodeClipboard roomLink={roomLink} />
+                <CodeClipboard roomId={roomId} />
               </div>
             )}
 
@@ -84,7 +99,7 @@ export default function LobbyPage() {
               type="submit"
               className="w-full"
               onClick={createRoomHandler}
-              disabled={!roomLink || !name}
+              disabled={!roomId || !name}
             >
               Create room and join
             </Button>

@@ -2,15 +2,20 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LobbyPage from "./pages/lobby-page";
 import { Toaster } from "@/components/ui/toaster";
 import JoinRoomPage from "./pages/join-room-page";
+import { SocketProvider } from "./context/SocketProvider";
+import CallRoomPage from "./pages/call-room-page";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Toaster />
-      <Routes>
-        <Route path="/create-room" Component={LobbyPage} />
-        <Route path="/room/:roomId" Component={JoinRoomPage} />
-      </Routes>
+      <SocketProvider>
+        <Routes>
+          <Route path="/create-room" Component={LobbyPage} />
+          <Route path="/room/:roomId" Component={JoinRoomPage} />
+          <Route path="/call-room/:roomId" Component={CallRoomPage} />
+        </Routes>
+      </SocketProvider>
     </BrowserRouter>
   );
 };

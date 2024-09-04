@@ -1,10 +1,10 @@
 import { useToast } from "@/hooks/use-toast";
 
-const CodeClipboard = ({ roomLink }: { roomLink: string }) => {
+const CodeClipboard = ({ roomId }: { roomId: string }) => {
   const { toast } = useToast();
 
   const copyToClipboardHandler = () => {
-    navigator.clipboard.writeText(roomLink);
+    navigator.clipboard.writeText(roomId);
     toast({
       title: "Copied to clipboard successfully",
     });
@@ -23,7 +23,7 @@ const CodeClipboard = ({ roomLink }: { roomLink: string }) => {
         </div>
         <div className="overflow-x-auto">
           <pre id="code" className="text-gray-300">
-            <code>{roomLink}</code>
+            <code>{roomId}</code>
           </pre>
         </div>
       </div>
