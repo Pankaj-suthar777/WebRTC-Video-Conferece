@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import JoinRoomPage from "./pages/join-room-page";
 import { SocketProvider } from "./context/SocketProvider";
 import CallRoomPage from "./pages/call-room-page";
+import Landing from "./pages/Landing";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <Toaster />
       <SocketProvider>
         <Routes>
+          <Route path="/" Component={Landing} />
           <Route path="/create-room" Component={LobbyPage} />
           <Route path="/room/:roomId" Component={JoinRoomPage} />
           <Route path="/call-room/:roomId" Component={CallRoomPage} />
