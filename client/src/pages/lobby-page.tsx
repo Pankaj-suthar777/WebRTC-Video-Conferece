@@ -34,8 +34,8 @@ export default function LobbyPage() {
       return;
     }
 
-    socket.emit("room:join", { name, room: generateLink() });
-  }, [error, generateLink, name, roomId, socket]);
+    socket.emit("room:join", { name, room: roomId });
+  }, [error, name, roomId, socket]);
 
   const handleJoinRoom = useCallback(
     (data: SocketRoomResponse) => {

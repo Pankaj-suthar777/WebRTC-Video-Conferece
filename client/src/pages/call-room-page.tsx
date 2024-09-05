@@ -13,8 +13,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ReactPlayer from "react-player";
 import ChatBox from "@/components/chat/chat-box";
+import WatingToJoin from "@/components/room/wating-to-join";
+import AcceptCall from "@/components/room/accept-call";
+import { Button } from "@/components/ui/button";
 
-interface OtherUser {
+export interface OtherUser {
   name?: string;
   socketId?: string;
 }
@@ -71,46 +74,74 @@ const CallRoomPage = () => {
     socket,
   ]);
 
+  // useEffect(() => {
+  //   if (myStream) {
+  //     sendStreams();
+  //   }
+  // }, [myStream, sendStreams]);
+
+  // console.log("done");
+
+  // const callUser = useCallback(() => handleCallUser(), [handleCallUser]);
+  // callUser();
+
+  useEffect(() => {
+    if (!myStream) {
+      handleCallUser();
+    }
+  }, [myStream, handleCallUser]);
+
+  useEffect(() => {
+    if (otherUser) {
+      if (!remoteStream) {
+        sendStreams();
+      }
+    }
+  }, [otherUser, remoteStream, sendStreams]);
+
   return (
-    <div className="grid md:grid-cols-3 h-screen overflow-hidden p-4">
-      <div className="col-span-2 flex flex-col gap-4">
-        <div className="flex-grow bg-red-200 relative flex justify-center">
-          {remoteStream && (
-            <div className="h-full w-fit">
-              <ReactPlayer
-                playing
-                muted
-                height="100%"
-                width="100%"
-                url={remoteStream}
-              />
-            </div>
-          )}
-          <div className="absolute bottom-4 right-4 h-[100px] w-[150px] ">
-            {myStream && (
-              <div className="h-full w-fit border border-black">
+    <>
+      <div className="grid md:grid-cols-3 h-screen overflow-hidden p-4">
+        <div className="col-span-2 flex flex-col gap-4">
+          <div className="flex-grow bg-red-200 relative flex justify-center">
+            {remoteStream && (
+              <div className="h-full w-fit">
                 <ReactPlayer
                   playing
                   muted
-                  height="100px"
-                  width="150px"
-                  url={myStream}
+                  height="100%"
+                  width="100%"
+                  url={remoteStream}
                 />
               </div>
             )}
+            <div className="absolute bottom-4 right-4 h-[100px] w-[150px]">
+              {myStream && (
+                <div className="h-full w-fit border border-black">
+                  <ReactPlayer
+                    playing
+                    muted
+                    height="100px"
+                    width="150px"
+                    url={myStream}
+                  />
+                </div>
+              )}
+            </div>
           </div>
+          <div className="h-[15%] bg-green-200"></div>
         </div>
-        <div className="h-[15%] bg-green-200">
-          {myStream && <button onClick={sendStreams}>Send Stream</button>}
-          {otherUser?.socketId && (
-            <button onClick={handleCallUser}>CALL</button>
-          )}
+        <div className="p-4 h-full overflow-hidden md:block hidden">
+          <ChatBox />
         </div>
       </div>
-      <div className="p-4 h-full overflow-hidden md:block hidden">
-        <ChatBox />
-      </div>
-    </div>
+      <WatingToJoin
+        handleCallUser={handleCallUser}
+        otherUser={otherUser}
+        remoteStream={remoteStream}
+      />
+      {/* <AcceptCall acceptCallFunction={acceptCallHandler} /> */}
+    </>
   );
 };
 
