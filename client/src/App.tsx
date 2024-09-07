@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import LobbyPage from "./pages/private-room/create-room-page";
 import JoinRoomPage from "./pages/private-room/join-page/join-room-page";
 import CallRoomPage from "./pages/private-room/call-room/call-room-page";
-import Landing from "./pages/private-room/Landing";
+import Landing from "./pages/test-page";
 import LoginPage from "./pages/auth/login/login-page";
 import RegisterPage from "./pages/auth/register/register-page";
 import Provider from "./Provider";
