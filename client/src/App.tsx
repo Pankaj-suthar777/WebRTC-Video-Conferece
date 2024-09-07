@@ -1,24 +1,25 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LobbyPage from "./pages/lobby-page";
-import { Toaster } from "@/components/ui/toaster";
-import JoinRoomPage from "./pages/join-room-page";
-import { SocketProvider } from "./context/SocketProvider";
-import CallRoomPage from "./pages/call-room-page";
-import Landing from "./pages/Landing";
+import { Route, Routes } from "react-router-dom";
+import LobbyPage from "./pages/private-room/create-room-page";
+import JoinRoomPage from "./pages/private-room/join-page/join-room-page";
+import CallRoomPage from "./pages/private-room/call-room/call-room-page";
+import Landing from "./pages/private-room/Landing";
+import LoginPage from "./pages/auth/login/login-page";
+import RegisterPage from "./pages/auth/register/register-page";
+import Provider from "./Provider";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Toaster />
-      <SocketProvider>
-        <Routes>
-          <Route path="/" Component={Landing} />
-          <Route path="/create-room" Component={LobbyPage} />
-          <Route path="/room/:roomId" Component={JoinRoomPage} />
-          <Route path="/call-room/:roomId" Component={CallRoomPage} />
-        </Routes>
-      </SocketProvider>
-    </BrowserRouter>
+    <Provider>
+      <Routes>
+        <Route path="/" Component={Landing} />
+        <Route path="/create-room" Component={LobbyPage} />
+        <Route path="/login" Component={LoginPage} />
+        <Route path="/register" Component={RegisterPage} />
+
+        <Route path="/room/:roomId" Component={JoinRoomPage} />
+        <Route path="/call-room/:roomId" Component={CallRoomPage} />
+      </Routes>
+    </Provider>
   );
 };
 

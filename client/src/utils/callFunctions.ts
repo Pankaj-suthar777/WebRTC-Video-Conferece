@@ -5,6 +5,7 @@ import { useSocket } from "@/context/SocketProvider";
 interface OtherUser {
   name?: string;
   socketId?: string;
+  isHost?: boolean;
 }
 
 // Handles when another user joins the call
@@ -16,6 +17,7 @@ export const useHandleUserJoined = (
       setOtherUser({
         name: data.name,
         socketId: data.id,
+        isHost: data?.isHost ? data?.isHost : false,
       });
     },
     [setOtherUser]
@@ -89,8 +91,6 @@ export const useHandleIncommingCall = (
 ) => {
   return useCallback(
     async ({ from, offer }: any) => {
-      console.log("incccccccccccccoming call!!!!!!!!!!1");
-
       setOtherUser({ ...otherUser, socketId: from });
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,

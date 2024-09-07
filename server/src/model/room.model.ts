@@ -1,15 +1,10 @@
 import { Model, model, ObjectId, Schema } from "mongoose";
 
-interface User {
-  name: string;
-  isHost: boolean;
-  socketId: string;
-}
-
 export interface RoomDocument {
   _id: ObjectId;
-  users: User[];
   roomId: string;
+  isPrivateRoom: boolean;
+  hostId: ObjectId;
 }
 
 const roomSchema = new Schema<RoomDocument>(
@@ -18,15 +13,15 @@ const roomSchema = new Schema<RoomDocument>(
       type: String,
       required: true,
     },
-    users: [
-      {
-        name: String,
-        socketId: String,
-        isHost: Boolean,
-      },
-    ],
+    isPrivateRoom: {
+      type: Boolean,
+      default: false,
+    },
+    hostId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-export default model("User", roomSchema) as Model<RoomDocument>;
+export default model("room", roomSchema) as Model<RoomDocument>;

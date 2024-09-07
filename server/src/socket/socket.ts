@@ -34,9 +34,9 @@ io.on("connection", (socket) => {
     io.to(room).emit("user:joined", { name, id: socket.id });
     socket.join(room);
     io.to(socket.id).emit("room:join", data);
-    const members = rooms.get(room);
-    console.log(members);
-    io.to(socket.id).emit("get-rooms-member-info", members);
+    // const members = rooms.get(room);
+    // console.log(members);
+    // io.to(socket.id).emit("get-rooms-member-info", members);
   });
 
   socket.on("user:call", ({ to, offer }) => {

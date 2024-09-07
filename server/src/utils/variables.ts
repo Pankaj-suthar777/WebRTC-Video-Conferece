@@ -4,4 +4,4 @@ const { env } = process as {
   };
 };
 
-export const { MONGO_URI, PORT, CLIENT_URL } = env;
+export const { MONGO_URI, PORT, CLIENT_URL, JWT_SECRET } = env;

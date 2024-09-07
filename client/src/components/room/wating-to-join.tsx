@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import BarLoaderComponent from "../layout/bar-loader-component";
-import { OtherUser } from "@/pages/call-room-page";
+import { OtherUser } from "@/pages/private-room/call-room-page";
 import { Button } from "../ui/button";
 
 interface Props {
@@ -22,7 +22,9 @@ const WatingToJoin = ({ otherUser, handleCallUser, remoteStream }: Props) => {
         <DialogContent showCloseIcon={false} className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {otherUser ? "Accept Call" : "Waiting for someone to join"}
+              {otherUser
+                ? `${otherUser?.name} is trying to join`
+                : "Waiting for someone to join"}
             </DialogTitle>
           </DialogHeader>
 
