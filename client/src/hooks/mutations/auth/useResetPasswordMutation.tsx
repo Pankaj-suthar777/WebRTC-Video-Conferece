@@ -1,13 +1,16 @@
 import client from "@/api/client";
 import { useState } from "react";
 import { toast } from "../../use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface UserResetPasswordInfo {
   newPassword: string;
   confirmPassword: string;
 }
 
-const useResetpasswordMutation = () => {
+const useResetPasswordMutation = () => {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const resetPassword = async (credentials: UserResetPasswordInfo) => {
     setLoading(true);
@@ -21,6 +24,7 @@ const useResetpasswordMutation = () => {
         variant: "default",
         title: response?.data?.message,
       });
+      navigate("/login");
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -34,4 +38,4 @@ const useResetpasswordMutation = () => {
   return { resetPassword, loading };
 };
 
-export default useResetpasswordMutation;
+export default useResetPasswordMutation;

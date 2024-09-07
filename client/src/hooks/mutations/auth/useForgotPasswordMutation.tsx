@@ -6,7 +6,7 @@ interface UserForgotPasswordInfo {
   email: string;
 }
 
-const useForgotpasswordMutation = () => {
+const useForgotPasswordMutation = () => {
   const [loading, setLoading] = useState(false);
   const forgotPassword = async (credentials: UserForgotPasswordInfo) => {
     setLoading(true);
@@ -33,4 +33,4 @@ const useForgotpasswordMutation = () => {
   return { forgotPassword, loading };
 };
 
-export default useForgotpasswordMutation;
+export default useForgotPasswordMutation;

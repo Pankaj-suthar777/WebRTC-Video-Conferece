@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/custom/button";
 import { cn } from "@/lib/utils";
-import useLoginMutation from "@/hooks/mutations/auth/useLoginMutation";
+import useForgotPasswordMutation from "@/hooks/mutations/auth/useForgotPasswordMutation";
 
 const formSchema = z.object({
   email: z
@@ -30,10 +30,10 @@ export function ForgotPasswordForm() {
     },
   });
 
-  const { loading, login } = useLoginMutation();
+  const { loading, forgotPassword } = useForgotPasswordMutation();
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    await login(data);
+    await forgotPassword(data);
   }
 
   return (
