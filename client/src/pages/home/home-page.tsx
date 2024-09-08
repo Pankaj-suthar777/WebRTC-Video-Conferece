@@ -30,10 +30,18 @@ const HomePage = () => {
             </div>
           </div>
           <InterestedIn />
-          <div className="border border-slate-600 p-8 mt-8 mx-8">
-            <p className="font-semibold text-lg underline">Most Basic Rules:</p>
-            <p>1. You must be 18 or older to use this site.</p>
-            <p>2. Spamming "M or F" will result in a timeout.</p>
+          <div className="border border-slate-600 md:p-8 p-4 mt-8 md:mx-8">
+            <p className="font-semibold text-lg underline mb-2">
+              Most Basic Rules:
+            </p>
+            <p>
+              1. You must be <span className="font-semibold">18 or older </span>
+              to use this site.
+            </p>
+            <p>
+              2. Spamming <span className="font-semibold">"M or F"</span> will
+              result in a timeout.
+            </p>
           </div>
         </div>
 
