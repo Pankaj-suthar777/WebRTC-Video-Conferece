@@ -6,6 +6,7 @@ import { Switch } from "../ui/switch";
 import { Separator } from "../ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const InterestedIn = () => {
   const [interest, setInterest] = useState<string[]>([]);
@@ -13,6 +14,7 @@ const InterestedIn = () => {
 
   const addIntersetHandler = () => {
     if (interest.includes(name) || !name) {
+      toast({ title: "Already included" });
       return;
     }
     setInterest([...interest, name]);
@@ -43,7 +45,9 @@ const InterestedIn = () => {
           }}
           value={name}
         />
-        <Button onClick={addIntersetHandler}>Add</Button>
+        <Button variant={"secondary"} onClick={addIntersetHandler}>
+          Add
+        </Button>
       </div>
       <div className="flex gap-2 flex-wrap">
         {interest.map((i) => (
