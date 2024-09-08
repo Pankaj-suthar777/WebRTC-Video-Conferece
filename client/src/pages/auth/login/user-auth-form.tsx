@@ -74,7 +74,7 @@ export function UserAuthForm() {
                     <FormLabel>Password</FormLabel>
                     <Link
                       to="/forgot-password"
-                      className="text-sm font-medium text-muted-foreground hover:opacity-75"
+                      className="text-sm font-medium hover:underline text-muted-foreground hover:opacity-75"
                     >
                       Forgot password?
                     </Link>

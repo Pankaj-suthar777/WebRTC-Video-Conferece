@@ -11,9 +11,9 @@ import { useSocket } from "@/context/SocketProvider";
 import peer from "@/service/peer";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import ChatBox from "@/components/chat/chat-box";
 import WatingToJoin from "@/components/room/wating-to-join";
 import { PhoneOff, Ellipsis, Mic, MicOff } from "lucide-react";
+import ChatControlBox from "@/components/chat-control/chat-control-box";
 
 export interface OtherUser {
   name?: string;
@@ -147,7 +147,7 @@ const CallRoomPage = () => {
           </div>
         </div>
         <div className="p-4 h-full overflow-hidden md:block hidden">
-          <ChatBox />
+          <ChatControlBox />
         </div>
       </div>
       <WatingToJoin

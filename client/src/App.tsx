@@ -1,29 +1,27 @@
-import { Route, Routes } from "react-router-dom";
-import LobbyPage from "./pages/private-room/create-room-page";
-import JoinRoomPage from "./pages/private-room/join-page/join-room-page";
-import CallRoomPage from "./pages/private-room/call-room/call-room-page";
-import Landing from "./pages/test-page";
-import LoginPage from "./pages/auth/login/login-page";
-import RegisterPage from "./pages/auth/register/register-page";
+import { useRoutes } from "react-router-dom";
 import Provider from "./Provider";
-import ForgotPasswordPage from "./pages/auth/forgot-password/forgot-password-page";
-import ResetPasswordPage from "./pages/auth/reset-password/reset-password-page";
+import GetRoutes from "./router";
+
+const AppRoutes = ({ routes }: { routes: any }) => {
+  const elements = useRoutes(routes);
+  return elements;
+};
 
 const App = () => {
+  const { loading, routes } = GetRoutes();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen text-3xl">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <Provider>
-      <Routes>
-        <Route path="/" Component={Landing} />
-        <Route path="/create-room" Component={LobbyPage} />
-        <Route path="/login" Component={LoginPage} />
-        <Route path="/register" Component={RegisterPage} />
-
-        <Route path="/f" Component={ForgotPasswordPage} />
-        <Route path="/r" Component={ResetPasswordPage} />
-
-        <Route path="/room/:roomId" Component={JoinRoomPage} />
-        <Route path="/call-room/:roomId" Component={CallRoomPage} />
-      </Routes>
+      {/* <AppRoutes /> */}
+      <AppRoutes routes={routes} />
     </Provider>
   );
 };

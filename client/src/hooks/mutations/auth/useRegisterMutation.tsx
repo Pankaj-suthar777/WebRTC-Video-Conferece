@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "../../use-toast";
 import useAuthStore from "@/store/authSlice";
 import { useNavigate } from "react-router-dom";
+import { Keys } from "@/@types/keys";
 
 interface UserRegisterInfo {
   password: string;
@@ -18,10 +19,11 @@ const useRegisterMutation = () => {
     setLoading(true);
 
     try {
-      const response = await client.post("/api/auth/register", credentials);
+      const response = await client.post("/auth/register", credentials);
 
       setUser(response.data?.userInfo);
       setToken(response.data?.token);
+      localStorage.setItem(Keys.AUTH_TOKEN, response.data?.token);
 
       toast({
         variant: "default",
@@ -32,7 +34,7 @@ const useRegisterMutation = () => {
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: err.response?.data?.message || "Something went wrong",
+        title: err.response?.data?.error || "Something went wrong",
       });
     } finally {
       setLoading(false);

@@ -1,10 +1,12 @@
-import { SendHorizonal } from "lucide-react";
+import { SendHorizonal, SkipForwardIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { colors } from "@/constant/colors";
 
-const ChatBox = () => {
+const ChatControlBox = () => {
   return (
-    <div className="flex flex-col  w-full overflow-hidden h-full">
+    <div className="flex flex-col w-full overflow-hidden h-full">
+      <div className="md:h-16 h-20 bg-slate-400 w-full mb-2 mt-2 md:mt-0"></div>
       <div className="flex-grow overflow-y-auto">
         {/* Chat messages */}
         <div className="flex flex-col gap-4 p-4">
@@ -31,15 +33,24 @@ const ChatBox = () => {
           ))}
         </div>
       </div>
-      <div className="w-full px-4">
+      <div className="w-full md:px-4">
         {/* Chat input */}
         <div className="flex justify-center items-center h-16">
+          <Button
+            style={{ backgroundColor: colors.primary }}
+            className="md:h-[50px] md:block hidden"
+          >
+            <SkipForwardIcon size={18} />
+          </Button>
           <Input
             type="text"
-            className="mr-4 flex-grow"
+            className="mx-4 flex-grow md:h-[50px] text-lg"
             placeholder="Type a message..."
           />
-          <Button variant={"ghost"}>
+          <Button
+            style={{ backgroundColor: colors.primary }}
+            className="md:h-[50px]"
+          >
             <SendHorizonal size={18} />
           </Button>
         </div>
@@ -48,4 +59,4 @@ const ChatBox = () => {
   );
 };
 
-export default ChatBox;
+export default ChatControlBox;

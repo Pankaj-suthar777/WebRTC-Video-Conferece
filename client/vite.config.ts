@@ -15,13 +15,21 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [react()],
     server: {
-      origin: "http://localhost:5000",
+      origin: "http://localhost:8000",
       proxy: {
         "/api": {
-          target: "http://localhost:5000",
+          target: "http://localhost:8000",
         },
       },
     },
+    // server: {
+    //   watch: {
+    //     usePolling: true,
+    //   },
+    //   host: true, // Here
+    //   strictPort: true,
+    //   port: 5173,
+    // },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

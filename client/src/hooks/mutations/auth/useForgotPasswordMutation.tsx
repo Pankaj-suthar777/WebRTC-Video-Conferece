@@ -23,7 +23,7 @@ const useForgotPasswordMutation = () => {
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: err.response?.data?.message || "Something went wrong",
+        title: err.response?.data?.error || "Something went wrong",
       });
     } finally {
       setLoading(false);

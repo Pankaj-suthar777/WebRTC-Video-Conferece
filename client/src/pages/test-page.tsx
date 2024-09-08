@@ -43,7 +43,9 @@
 // };
 
 // export default Landing;
-import ChatBox from "@/components/chat/chat-box";
+
+import ChatControlBox from "@/components/chat-control/chat-control-box";
+import Header from "@/components/layout/header";
 import { PhoneOff, Ellipsis, Mic, MicOff } from "lucide-react";
 import { useState } from "react";
 
@@ -55,20 +57,21 @@ const Landing = () => {
   };
   return (
     <div className="h-screen w-screen overflow-hidden">
-      <div className="h-[60px] w-full bg-slate-400 top-0 flex justify-center items-center">
-        <div className="w-[95%] md:w-[90%] lg:w-[85%] h-full bg-red-500 flex justify-between items-center">
-          <h1 className="font-bold text-2xl">Logo</h1>
-          <div>App</div>
-        </div>
-      </div>
-      <div className="grid h-[calc(100vh-60px)] md:grid-cols-2 p-4 overflow-hidden">
-        <div className="flex md:h-full w-full flex-col gap-4 h-[30vh]">
-          <div className="h-full w-full bg-black"></div>
+      <Header />
+      <div className="grid h-[calc(100vh-60px)] md:grid-cols-2 md:p-4 p-2 overflow-hidden">
+        <div className="flex md:h-full w-full flex-col gap-4 h-[35vh]">
+          <div className="h-full w-full bg-black relative">
+            {/* self camera - for mobile size device */}
+            <div className="md:hidden absolute bottom-4 right-4 h-[80px] w-[120px] bg-yellow-200">
+              <div className="w-full h-full"></div>
+            </div>
+          </div>
+          {/* self camera - for desktop/tablet size device */}
           <div className="h-full w-full bg-black md:block hidden"></div>
         </div>
 
-        <div className="px-4 md:h-full h-[50vh] overflow-hidden flex justify-center items-center">
-          <ChatBox />
+        <div className="md:px-4 md:h-full flex-1 overflow-hidden flex justify-center items-center">
+          <ChatControlBox />
         </div>
       </div>
     </div>
