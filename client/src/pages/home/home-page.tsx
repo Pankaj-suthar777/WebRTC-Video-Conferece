@@ -21,11 +21,8 @@ import { Input } from "@/components/ui/input";
 import { CopyIcon } from "lucide-react";
 import useCreatePrivateRoom from "@/hooks/mutations/room/useCreatePrivateRoom";
 import { toast } from "@/hooks/use-toast";
-import { PrivateRoomTable } from "@/components/home/my-private-room-table/data-table";
-import {
-  columns,
-  Payment,
-} from "@/components/home/my-private-room-table/column";
+import Loader from "@/components/layout/loader";
+import PrivateRoomTable from "@/components/home/my-private-room-table/private-room-table";
 
 const HomePage = () => {
   const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -67,39 +64,6 @@ const HomePage = () => {
       title: "Link is copied to clipboard",
     });
   };
-
-  const data: Payment[] = [
-    {
-      id: "1",
-      amount: 250.0,
-      status: "success",
-      email: "user1@example.com",
-    },
-    {
-      id: "2",
-      amount: 100.0,
-      status: "pending",
-      email: "user2@example.com",
-    },
-    {
-      id: "3",
-      amount: 50.0,
-      status: "failed",
-      email: "user3@example.com",
-    },
-    {
-      id: "4",
-      amount: 300.0,
-      status: "processing",
-      email: "user4@example.com",
-    },
-    {
-      id: "5",
-      amount: 120.0,
-      status: "success",
-      email: "user5@example.com",
-    },
-  ];
 
   return (
     <div className="flex flex-col items-center">
@@ -166,7 +130,7 @@ const HomePage = () => {
         </div>
 
         <div className="mt-8 space-y-8">
-          <PrivateRoomTable columns={columns} data={data} />
+          <PrivateRoomTable />
           <FAQ />
         </div>
       </div>
@@ -185,7 +149,9 @@ const HomePage = () => {
               </DialogDescription>
             </DialogHeader>
             {loading ? (
-              <h1>Loading</h1>
+              <div className="flex justify-center items-center">
+                <Loader />
+              </div>
             ) : (
               <div className="flex items-center space-x-2">
                 <div className="grid flex-1 gap-2">

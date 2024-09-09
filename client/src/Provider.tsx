@@ -1,13 +1,15 @@
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "./components/ui/toaster";
-import { SocketProvider } from "./context/SocketProvider";
 import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <BrowserRouter>
       <Toaster />
-      <SocketProvider>{children}</SocketProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </BrowserRouter>
   );
 };

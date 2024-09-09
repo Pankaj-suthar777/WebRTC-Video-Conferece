@@ -29,3 +29,37 @@ export const create_room: RequestHandler = async (req: CreateRoom, res) => {
     });
   }
 };
+
+export const get_my_rooms: RequestHandler = async (req, res) => {
+  const user = req.user;
+
+  try {
+    const rooms = await roomModel.find({
+      hostId: user.id,
+    });
+
+    res.send({
+      rooms: rooms || [],
+    });
+  } catch (error) {
+    res.send({
+      message: error?.message,
+    });
+  }
+};
+
+export const delete_room: RequestHandler = async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    await roomModel.findByIdAndDelete(roomId);
+
+    res.send({
+      message: "room deleted",
+    });
+  } catch (error) {
+    res.send({
+      message: error?.message,
+    });
+  }
+};

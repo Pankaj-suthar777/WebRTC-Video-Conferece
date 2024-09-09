@@ -1,23 +1,28 @@
+import { Room } from "@/@types/room";
 import { ColumnDef } from "@tanstack/react-table";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
+import moment from "moment";
+import RoomActionsCell from "./room-actions-cell";
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Room>[] = [
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "roomId",
+    header: "Room Id",
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      const createdAt = row.original.createdAt;
+
+      return <div>{moment(createdAt).format("LL")}</div>;
+    },
   },
   {
-    accessorKey: "amount",
-    header: "Amount",
+    accessorKey: "actions",
+    header: "Join",
+    cell: ({ row }) => (
+      <RoomActionsCell _id={row.original._id} roomId={row.original.roomId} />
+    ),
   },
 ];

@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  webrtc-chat-server:
+    build:
+      ./server
+      # context: ./backend
+      # dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - ./server/.env
+    container_name: webrtc-chat-server-container
+
+  webrtc-chat-client:
+    build:
+      ./client
+      # to apply -it tag
+    stdin_open: true
+    tty: true
+
+    volumes:
+      - ./client/src:/app/src
+    ports:
+      - 5173:5173
+    env_file:
+      - ./client/.env
+
+    depends_on:
+      - webrtc-chat-server
+    container_name: webrtc-chat-client-container

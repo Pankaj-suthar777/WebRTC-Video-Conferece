@@ -1,5 +1,6 @@
 export const baseURL = "/api";
 
+import { Keys } from "@/@types/keys";
 import axios, { CreateAxiosDefaults } from "axios";
 
 const client = axios.create({
@@ -11,7 +12,7 @@ export default client;
 type headers = CreateAxiosDefaults<any>["headers"];
 
 export const getClient = async (headers?: headers) => {
-  const token = await localStorage.getItem("accessToken");
+  const token = localStorage.getItem(Keys.AUTH_TOKEN);
 
   if (!token) return axios.create({ baseURL });
 

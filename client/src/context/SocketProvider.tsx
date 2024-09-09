@@ -1,4 +1,5 @@
 import { createContext, useMemo, useContext } from "react";
+import { Outlet } from "react-router-dom";
 import { io } from "socket.io-client";
 
 const SocketContext = createContext<null | any>(null);
@@ -9,12 +10,12 @@ export const useSocket = () => {
   return socket;
 };
 
-export const SocketProvider = (props: any) => {
+export const SocketProvider = () => {
   const socket = useMemo(() => io(process.env.BACKEND_URL as string), []);
 
   return (
     <SocketContext.Provider value={socket}>
-      {props.children}
+      <Outlet />
     </SocketContext.Provider>
   );
 };
