@@ -1,29 +1,17 @@
-import { RequestHandler } from "express";
-import * as yup from "yup";
+import { NextFunction, Request, Response } from "express";
+import { AnyZodObject } from "zod";
 
-export const validate = (schema: any): RequestHandler => {
-  return async (req, res, next) => {
-    if (!req.body)
-      return res.status(422).json({ error: "Empty body is not expcepted!" });
-
+export const validate =
+  (schema: AnyZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const schemaToValidate = yup.object({
-        body: schema,
+      await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
       });
-      await schemaToValidate.validate(
-        {
-          body: req.body,
-        },
-        {
-          abortEarly: true,
-        }
-      );
-
-      next();
+      return next();
     } catch (error) {
-      if (error instanceof yup.ValidationError) {
-        res.status(422).json({ error: error.message });
-      }
+      return res.status(400).json(error);
     }
   };
-};

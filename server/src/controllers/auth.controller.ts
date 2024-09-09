@@ -2,7 +2,7 @@ import { CreateUser } from "#/@types/user";
 import userModel from "#/model/user.model";
 import { JWT_SECRET } from "#/utils/variables";
 import { RequestHandler } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const createUser: RequestHandler = async (req: CreateUser, res) => {
   const { email, password, name } = req.body;
@@ -17,7 +17,7 @@ export const createUser: RequestHandler = async (req: CreateUser, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
     res.status(201).json({
-      user: { id: user._id, name, email },
+      userInfo: { id: user._id, name, email },
       message: "Signup is successfull",
       token,
     });
@@ -42,23 +42,28 @@ export const signIn: RequestHandler = async (req, res) => {
   const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
   res.json({
-    profile: {
+    userInfo: {
       id: user._id,
       name: user.name,
       email: user.email,
       avatar: user.avatar?.url,
     },
     token,
+    message: "Login successfull",
   });
 };
 
 export const verifyToken: RequestHandler = async (req, res) => {
   try {
     const { token } = req.body;
-    const isValid = jwt.verify(token, JWT_SECRET);
-    console.log("isValid", isValid);
-    res.send({ isValid });
+    const { userId } = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+    const userInfo = await userModel.findById(userId);
+
+    if (!userInfo) return res.status(403).json({ error: "user not found!" });
+
+    res.send({ userInfo });
   } catch (error) {
-    res.status(401).send({ message: "Invalid or expired token", error });
+    res.status(401).send({ error: "Invalid or expired token" });
   }
 };

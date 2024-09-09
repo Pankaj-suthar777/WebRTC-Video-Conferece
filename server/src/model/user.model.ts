@@ -52,4 +52,4 @@ userSchema.methods.comparePassword = async function (password) {
   return result;
 };
 
-export default model("User", userSchema) as Model<UserDocument, {}, Methods>;
+export default model("user", userSchema) as Model<UserDocument, {}, Methods>;

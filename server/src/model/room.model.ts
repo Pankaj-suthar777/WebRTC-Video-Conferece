@@ -5,6 +5,7 @@ export interface RoomDocument {
   roomId: string;
   isPrivateRoom: boolean;
   hostId: ObjectId;
+  createdAt: Date;
 }
 
 const roomSchema = new Schema<RoomDocument>(
