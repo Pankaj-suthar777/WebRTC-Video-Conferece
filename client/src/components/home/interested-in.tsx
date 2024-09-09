@@ -3,7 +3,6 @@ import { Input } from "../ui/input";
 import { Button } from "../custom/button";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { Separator } from "../ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -67,7 +66,6 @@ const InterestedIn = () => {
         </Label>
         <Switch id="common-interset" className="shadow-lg" />
       </div>
-      <Separator className="mt-4" />
     </div>
   );
 };

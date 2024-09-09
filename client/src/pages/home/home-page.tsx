@@ -4,7 +4,10 @@ import InterestedIn from "@/components/home/interested-in";
 import Header from "@/components/layout/header";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -13,24 +16,90 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuthStore from "@/store/authSlice";
 import Footer from "@/components/layout/footer";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { CopyIcon } from "lucide-react";
+import useCreatePrivateRoom from "@/hooks/mutations/room/useCreatePrivateRoom";
+import { toast } from "@/hooks/use-toast";
+import { PrivateRoomTable } from "@/components/home/my-private-room-table/data-table";
+import {
+  columns,
+  Payment,
+} from "@/components/home/my-private-room-table/column";
 
 const HomePage = () => {
   const [openLoginModal, setOpenLoginModal] = useState(false);
-  const { isAuthenticated, token } = useAuthStore();
+  const [openCreateRoomModal, setOpenCreateRoomModal] = useState(false);
+
   const navigate = useNavigate();
+  const { isAuthenticated, token } = useAuthStore();
+
+  const { createRoom, loading, newlyCreateRoomLink } = useCreatePrivateRoom();
 
   useEffect(() => {
     if (isAuthenticated) {
       setOpenLoginModal(false);
+    } else {
+      setOpenLoginModal(true);
     }
   }, [isAuthenticated]);
 
-  const isUserAuthenticatedModal = (redirect: string) => {
+  const isUserAuthenticatedModal = async (redirect?: string) => {
     if (isAuthenticated && token) {
-      return navigate(redirect);
+      if (redirect) {
+        return navigate(redirect);
+      } else {
+        await handleOpenCreateRoomModal();
+      }
+    } else {
+      setOpenLoginModal(true);
     }
-    setOpenLoginModal(true);
   };
+
+  const handleOpenCreateRoomModal = async () => {
+    setOpenCreateRoomModal(true);
+    await createRoom();
+  };
+
+  const copyNewlyCreateRoomHandler = () => {
+    navigator.clipboard.writeText(newlyCreateRoomLink);
+    toast({
+      title: "Link is copied to clipboard",
+    });
+  };
+
+  const data: Payment[] = [
+    {
+      id: "1",
+      amount: 250.0,
+      status: "success",
+      email: "user1@example.com",
+    },
+    {
+      id: "2",
+      amount: 100.0,
+      status: "pending",
+      email: "user2@example.com",
+    },
+    {
+      id: "3",
+      amount: 50.0,
+      status: "failed",
+      email: "user3@example.com",
+    },
+    {
+      id: "4",
+      amount: 300.0,
+      status: "processing",
+      email: "user4@example.com",
+    },
+    {
+      id: "5",
+      amount: 120.0,
+      status: "success",
+      email: "user5@example.com",
+    },
+  ];
 
   return (
     <div className="flex flex-col items-center">
@@ -58,7 +127,7 @@ const HomePage = () => {
                   onClick={() => isUserAuthenticatedModal("/random-room")}
                   className="md:py-12 py-8 md:px-24 px-12 text-lg"
                 >
-                  VIDEO
+                  START RANDOM VIDEO CHAT
                 </Button>
               </div>
             </div>
@@ -87,17 +156,71 @@ const HomePage = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <Button className="md:py-12 py-8 md:px-24 px-12 text-lg">
+            <Button
+              onClick={() => isUserAuthenticatedModal()}
+              className="md:py-12 py-8 md:px-24 px-12 text-lg"
+            >
               Create Room
             </Button>
           </div>
         </div>
-        <div className="mt-12">
+
+        <div className="mt-8 space-y-8">
+          <PrivateRoomTable columns={columns} data={data} />
           <FAQ />
         </div>
       </div>
 
       <div>
+        {/* Create Room Modal */}
+        <Dialog
+          open={openCreateRoomModal}
+          onOpenChange={() => setOpenCreateRoomModal(!openCreateRoomModal)}
+        >
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Share link</DialogTitle>
+              <DialogDescription>
+                Anyone who has this link will be able to join room.
+              </DialogDescription>
+            </DialogHeader>
+            {loading ? (
+              <h1>Loading</h1>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <div className="grid flex-1 gap-2">
+                  <Label htmlFor="link" className="sr-only">
+                    Link
+                  </Label>
+                  <Input
+                    id="link"
+                    defaultValue={newlyCreateRoomLink}
+                    readOnly
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="px-3"
+                  onClick={copyNewlyCreateRoomHandler}
+                >
+                  <span className="sr-only">Copy</span>
+                  <CopyIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <DialogFooter className="sm:justify-start">
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Login Room Modal */}
         <Dialog
           open={openLoginModal}
           onOpenChange={() => setOpenLoginModal(!openLoginModal)}

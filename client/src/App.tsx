@@ -21,7 +21,6 @@ const App = () => {
 
   return (
     <Provider>
-      {/* <AppRoutes /> */}
       <AppRoutes routes={routes} />
     </Provider>
   );
