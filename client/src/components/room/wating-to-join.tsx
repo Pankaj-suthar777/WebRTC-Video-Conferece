@@ -5,7 +5,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import BarLoaderComponent from "../layout/bar-loader-component";
-import { OtherUser } from "@/pages/private-room/call-room-page";
 import { Button } from "../ui/button";
 
 interface Props {

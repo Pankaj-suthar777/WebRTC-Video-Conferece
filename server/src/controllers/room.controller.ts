@@ -63,3 +63,27 @@ export const delete_room: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const is_room_exist: RequestHandler = async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    const room = await roomModel.find({
+      roomId,
+    });
+
+    if (room.length === 0) {
+      return res.send({
+        roomExist: false,
+      });
+    }
+
+    return res.send({
+      roomExist: true,
+    });
+  } catch (error) {
+    res.send({
+      message: error?.message,
+    });
+  }
+};

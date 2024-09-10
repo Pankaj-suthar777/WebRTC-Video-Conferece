@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/layout/data-table";
 import { columns } from "./column";
-import { useGetRooms } from "@/hooks/query/query";
+import { useGetRooms } from "@/hooks/query/room-query";
 import Loader from "@/components/layout/loader";
 
 const PrivateRoomTable = () => {

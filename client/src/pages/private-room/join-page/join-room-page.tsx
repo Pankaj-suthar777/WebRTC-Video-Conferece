@@ -1,35 +1,58 @@
 import { SocketRoomResponse } from "@/@types/socket-room-info";
+import Loader from "@/components/layout/loader";
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useSocket } from "@/context/SocketProvider";
-import { useCallback, useEffect, useState } from "react";
+import { useIsRoomExist } from "@/hooks/query/room-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { z } from "zod";
+
+const formSchema = z.object({
+  name: z.string().min(1, { message: "Name is required field" }),
+});
 
 export default function JoinRoomPage() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
+
   const { roomId } = useParams();
   const [searchParams] = useSearchParams();
   const yourName = searchParams.get("yourName");
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [error, setError] = useState({ name: "" });
 
+  const navigate = useNavigate();
   const socket = useSocket();
 
-  const JoinRoomHandler = useCallback(() => {
-    if (name.length === 0) {
-      setError({ ...error, name: "Name is required field" });
-      return;
-    }
-    socket.emit("room:join", { name, room: roomId });
-  }, [error, name, roomId, socket]);
+  const { isLoading, data } = useIsRoomExist(roomId || "");
+
+  const JoinRoomHandler = useCallback(
+    (data: z.infer<typeof formSchema>) => {
+      const { name } = data;
+      socket.emit("room:join", { name, room: roomId });
+    },
+    [roomId, socket],
+  );
 
   const handleJoinRoom = useCallback(
     (data: SocketRoomResponse) => {
       const { room, name } = data;
-      navigate(`/call-room/${room}`, { state: { name } });
+      navigate(`/room/call-room/${room}`, { state: { name } });
     },
-    [navigate]
+    [navigate],
   );
 
   useEffect(() => {
@@ -42,7 +65,7 @@ export default function JoinRoomPage() {
 
   useEffect(() => {
     if (yourName && roomId) {
-      navigate(`/call-room/${roomId}`, {
+      navigate(`/room/call-room/${roomId}`, {
         state: {
           yourName,
         },
@@ -50,50 +73,65 @@ export default function JoinRoomPage() {
     }
   }, [yourName, navigate, roomId]);
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (!data?.roomExist) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center space-y-4">
+        <h1 className="text-3xl">Room not exist or deleted automatically</h1>
+        <Button onClick={() => navigate(-1)} variant={"outline"}>
+          GO BACK
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="flex h-screen w-screen items-center justify-center">
       <div className="flex items-center justify-center py-12">
-        <div className="mx-auto grid sm:w-[450px] w-[330px] gap-6">
+        <div className="mx-auto grid w-[330px] gap-6 sm:w-[450px]">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Join Room</h1>
             <p className="text-balance text-muted-foreground">
               Enter your name and join room.
             </p>
           </div>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="name">Your name</Label>
-              </div>
-              <Input
-                type="name"
-                required
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError({ ...error, name: "" });
-                }}
-              />
-              {error.name && <p className="text-red-500">{error.name}</p>}
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(JoinRoomHandler)}>
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="space-y-1">
+                        <FormLabel>Your name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="display name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              onClick={JoinRoomHandler}
-              disabled={!roomId || !name}
-            >
-              Join
-            </Button>
-          </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  Join
+                </Button>
+              </div>
+            </form>
+          </Form>
         </div>
-      </div>
-      <div className="hidden bg-muted lg:block">
-        <img
-          src="/medium.webp"
-          alt="Image"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
       </div>
     </div>
   );
