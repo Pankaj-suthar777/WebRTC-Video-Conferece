@@ -1,4 +1,5 @@
 import { SocketRoomResponse } from "@/@types/socket-room-info";
+import { getClient } from "@/api/client";
 import Loader from "@/components/layout/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +16,7 @@ import { useIsRoomExist } from "@/hooks/query/room-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -31,47 +32,50 @@ export default function JoinRoomPage() {
   });
 
   const { roomId } = useParams();
-  const [searchParams] = useSearchParams();
-  const yourName = searchParams.get("yourName");
 
   const navigate = useNavigate();
   const socket = useSocket();
 
   const { isLoading, data } = useIsRoomExist(roomId || "");
 
-  const JoinRoomHandler = useCallback(
-    (data: z.infer<typeof formSchema>) => {
-      const { name } = data;
-      socket.emit("room:join", { name, room: roomId });
-    },
-    [roomId, socket],
-  );
-
   const handleJoinRoom = useCallback(
     (data: SocketRoomResponse) => {
-      const { room, name } = data;
-      navigate(`/room/call-room/${room}`, { state: { name } });
+      const { room, name, isHost } = data;
+      navigate(`/room/call-room/${room}`, { state: { name, isHost } });
     },
     [navigate],
   );
 
   useEffect(() => {
     socket.on("room:join", handleJoinRoom);
-
     return () => {
       socket.off("room:join", handleJoinRoom);
     };
   }, [handleJoinRoom, socket]);
 
+  const JoinRoomHandler = useCallback(
+    (data: z.infer<typeof formSchema>) => {
+      const { name } = data;
+      socket.emit("room:join", { name, room: roomId, isHost: false });
+    },
+    [roomId, socket],
+  );
+
   useEffect(() => {
-    if (yourName && roomId) {
-      navigate(`/room/call-room/${roomId}`, {
-        state: {
-          yourName,
-        },
-      });
-    }
-  }, [yourName, navigate, roomId]);
+    const isHostTryingToJoin = async () => {
+      const client = await getClient();
+      const { data } = await client.get("/room/join-room-host/" + roomId);
+      if (data?.isHostTryingToJoin) {
+        return navigate("/room/call-room/" + roomId, {
+          state: {
+            isHostTryingToJoin: true,
+            name: data.name,
+          },
+        });
+      }
+    };
+    isHostTryingToJoin();
+  }, [navigate, roomId]);
 
   if (isLoading) {
     return (

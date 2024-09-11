@@ -87,3 +87,55 @@ export const is_room_exist: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const is_host_joining: RequestHandler = async (req, res) => {
+  const { roomId } = req.params;
+  const { id } = req.user;
+
+  try {
+    const room = await roomModel.find({
+      hostId: id,
+      roomId: roomId,
+    });
+
+    if (room.length === 0) {
+      return res.send({
+        isHostTryingToJoin: false,
+      });
+    }
+
+    return res.send({
+      isHostTryingToJoin: true,
+      name: req.user.name,
+    });
+  } catch (error) {
+    res.send({
+      message: error?.message,
+    });
+  }
+};
+
+export const is_user_joining: RequestHandler = async (req, res) => {
+  const { roomId } = req.params;
+  const { name } = req.body;
+
+  try {
+    const room = await roomModel.find({
+      roomId: roomId,
+    });
+
+    if (room.length === 0) {
+      return res.status(401).send({
+        message: "room not exist.",
+      });
+    }
+
+    return res.send({
+      isUserTryingToJoin: true,
+    });
+  } catch (error) {
+    res.send({
+      message: error?.message,
+    });
+  }
+};
