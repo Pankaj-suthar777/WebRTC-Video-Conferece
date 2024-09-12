@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useSocket } from "@/context/SocketProvider";
 import { useIsRoomExist } from "@/hooks/query/room-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
@@ -24,6 +24,8 @@ const formSchema = z.object({
 });
 
 export default function JoinRoomPage() {
+  const [isImHost, setIsImHost] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,10 +42,13 @@ export default function JoinRoomPage() {
 
   const handleJoinRoom = useCallback(
     (data: SocketRoomResponse) => {
-      const { room, name, isHost } = data;
-      navigate(`/room/call-room/${room}`, { state: { name, isHost } });
+      const { room, name, socketId } = data;
+      console.log("here ===", data);
+      navigate(`/room/call-room/${room}`, {
+        state: { name, isHost: isImHost, socketId },
+      });
     },
-    [navigate],
+    [navigate, isImHost],
   );
 
   useEffect(() => {
@@ -56,9 +61,9 @@ export default function JoinRoomPage() {
   const JoinRoomHandler = useCallback(
     (data: z.infer<typeof formSchema>) => {
       const { name } = data;
-      socket.emit("room:join", { name, room: roomId, isHost: false });
+      socket.emit("room:join", { name, room: roomId, isHost: isImHost });
     },
-    [roomId, socket],
+    [roomId, socket, isImHost],
   );
 
   useEffect(() => {
@@ -66,12 +71,7 @@ export default function JoinRoomPage() {
       const client = await getClient();
       const { data } = await client.get("/room/join-room-host/" + roomId);
       if (data?.isHostTryingToJoin) {
-        return navigate("/room/call-room/" + roomId, {
-          state: {
-            isHostTryingToJoin: true,
-            name: data.name,
-          },
-        });
+        setIsImHost(true);
       }
     };
     isHostTryingToJoin();

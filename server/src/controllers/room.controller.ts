@@ -90,7 +90,14 @@ export const is_room_exist: RequestHandler = async (req, res) => {
 
 export const is_host_joining: RequestHandler = async (req, res) => {
   const { roomId } = req.params;
-  const { id } = req.user;
+
+  if (!req?.user) {
+    return res.send({
+      isHostTryingToJoin: false,
+    });
+  }
+
+  const { id } = req?.user;
 
   try {
     const room = await roomModel.find({
@@ -117,7 +124,7 @@ export const is_host_joining: RequestHandler = async (req, res) => {
 
 export const is_user_joining: RequestHandler = async (req, res) => {
   const { roomId } = req.params;
-  const { name } = req.body;
+  const { name } = req?.body;
 
   try {
     const room = await roomModel.find({

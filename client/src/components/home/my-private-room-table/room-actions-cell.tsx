@@ -1,6 +1,6 @@
 import { Button } from "@/components/custom/button";
 import { CopyIcon, Link as LinkLucideIcon, Trash } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useDeleteRoomMutation from "@/hooks/mutations/room/useDeleteRoomMutation";
 import {
   Dialog,
@@ -19,6 +19,7 @@ import { roomLink } from "@/utils/helper";
 
 const RoomActionsCell = ({ roomId, _id }: { roomId: string; _id: string }) => {
   const { mutate, isLoading } = useDeleteRoomMutation();
+  const navigate = useNavigate();
 
   const handleDelete = () => {
     mutate(_id);
@@ -26,8 +27,12 @@ const RoomActionsCell = ({ roomId, _id }: { roomId: string; _id: string }) => {
 
   return (
     <div className="flex items-center gap-4">
-      <Button disabled={isLoading} size={"sm"}>
-        <Link to={`/room/${roomId}`}>Join</Link>
+      <Button
+        disabled={isLoading}
+        size={"sm"}
+        onClick={() => navigate(`/room/${roomId}`)}
+      >
+        Join
       </Button>
       <CopyLinkButton roomId={roomId} />
       <Button

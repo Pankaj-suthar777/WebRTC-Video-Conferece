@@ -4,6 +4,9 @@ import ResetPasswordPage from "@/pages/auth/reset-password/reset-password-page";
 import RegisterPage from "@/pages/auth/register/register-page";
 import NotFoundPage from "@/pages/error/not-found-error";
 import HomePage from "@/pages/home/home-page";
+import { SocketProvider } from "@/context/SocketProvider";
+import JoinRoomPage from "@/pages/private-room/join-page/join-room-page";
+import CallRoomPage from "@/pages/private-room/call-room/call-room-page";
 
 const publicRoutes = [
   {
@@ -29,6 +32,17 @@ const publicRoutes = [
   {
     path: "/reset-password",
     element: <ResetPasswordPage />,
+  },
+  {
+    path: "/room",
+    element: <SocketProvider />,
+    children: [
+      { path: "/room/call-room/:roomId", element: <CallRoomPage /> },
+      {
+        path: "/room/:roomId",
+        element: <JoinRoomPage />,
+      },
+    ],
   },
   {
     path: "*",

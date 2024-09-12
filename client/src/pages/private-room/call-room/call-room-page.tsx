@@ -48,9 +48,14 @@ const CallRoomPage = () => {
   useEffect(() => {
     peer.peer.addEventListener("track", async (ev: any) => {
       const remoteStream = ev.streams;
+
       setRemoteStream(remoteStream[0]);
     });
   }, []);
+
+  useEffect(() => {
+    socket.emit("get:all:user", { mySocketId: myInfo?.socketId });
+  }, [myInfo?.socketId, socket]);
 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
@@ -58,6 +63,19 @@ const CallRoomPage = () => {
     socket.on("call:accepted", handleCallAccepted);
     socket.on("peer:nego:needed", handleNegoNeedIncomming);
     socket.on("peer:nego:final", handleNegoNeedFinal);
+    socket.on("all:user", (data: any) => {
+      const { all_users } = data;
+      console.log("useruser", all_users[0]);
+
+      if (!myInfo) return;
+      if (!otherUser) {
+        all_users?.[0].map((user: SocketUser) => {
+          if (user.socketId !== myInfo?.socketId) {
+            setOtherUser(user);
+          }
+        });
+      }
+    });
 
     return () => {
       socket.off("user:joined", handleUserJoined);
@@ -65,6 +83,17 @@ const CallRoomPage = () => {
       socket.off("call:accepted", handleCallAccepted);
       socket.off("peer:nego:needed", handleNegoNeedIncomming);
       socket.off("peer:nego:final", handleNegoNeedFinal);
+      socket.off("all:user", (data: any) => {
+        const { all_users } = data;
+
+        if (!otherUser) {
+          all_users?.map((user: SocketUser) => {
+            if (user.socketId !== myInfo?.socketId) {
+              setOtherUser(user);
+            }
+          });
+        }
+      });
     };
   }, [
     handleCallAccepted,
@@ -72,6 +101,9 @@ const CallRoomPage = () => {
     handleNegoNeedFinal,
     handleNegoNeedIncomming,
     handleUserJoined,
+    myInfo,
+    myInfo?.socketId,
+    otherUser,
     socket,
   ]);
 
@@ -92,15 +124,48 @@ const CallRoomPage = () => {
   useEffect(() => {
     if (state) {
       setMyInfo({
-        isHost: state.isHostTryingToJoin,
+        isHost: state.isHost,
         name: state.name,
+        socketId: state.socketId,
       });
     }
   }, [state]);
 
+  useEffect(() => {
+    if (myStream && peer.peer) {
+      addStreamTracksToPeerConnection(myStream, peer.peer);
+    }
+  }, [myStream]);
+
+  function addStreamTracksToPeerConnection(
+    stream: MediaStream,
+    peerConnection: RTCPeerConnection,
+  ) {
+    stream.getTracks().forEach((track) => {
+      const senders = peerConnection.getSenders();
+      const isTrackAlreadyAdded = senders.some(
+        (sender) => sender.track === track,
+      );
+
+      if (!isTrackAlreadyAdded) {
+        peerConnection.addTrack(track, stream);
+      }
+    });
+  }
+
+  useEffect(() => {
+    return () => {
+      // Clean up streams and peer connection when the component unmounts
+      peer.peer.close();
+    };
+  }, []);
+
   const micHandler = () => {
     setMicOn(!micOn);
   };
+
+  console.log("otherUser===", otherUser);
+  console.log("myInfo===", myInfo);
 
   return (
     <>
@@ -117,7 +182,7 @@ const CallRoomPage = () => {
                   url={remoteStream}
                 />
                 <div className="z-5 absolute bottom-0 flex h-14 w-full items-center justify-center bg-slate-600 opacity-40">
-                  {/* <p className="text-white opacity-100">{userName}</p> */}
+                  <p className="text-white opacity-100">{myInfo?.name}</p>
                 </div>
               </div>
             )}

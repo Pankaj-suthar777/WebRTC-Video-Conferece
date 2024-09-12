@@ -2,7 +2,6 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { CLIENT_URL } from "#/utils/variables";
-import roomModel from "#/model/room.model";
 
 const app = express();
 
@@ -22,21 +21,27 @@ io.on("connection", (socket) => {
     // room => roomId
     const { name, room, isHost } = data;
 
+    console.log(data);
     if (!rooms.has(room)) {
       rooms.set(room, []);
     }
 
     const roomUsers = rooms.get(room);
 
-    // const isHost = roomUsers.length === 0;
-
-    roomUsers.push({ isHost, name, socketId: socket.id });
+    roomUsers.push({ name, socketId: socket.id, isHost });
 
     rooms.set(room, roomUsers);
 
-    io.to(room).emit("user:joined", { name, id: socket.id, isHost });
+    io.to(room).emit("user:joined", { name, socketId: socket.id, isHost });
+
     socket.join(room);
-    io.to(socket.id).emit("room:join", data);
+    io.to(socket.id).emit("room:join", { ...data, socketId: socket.id });
+    console.log(rooms);
+  });
+
+  socket.on("get:all:user", async (data) => {
+    const all_users = Array.from(rooms.values());
+    io.to(socket.id).emit("all:user", { all_users });
   });
 
   socket.on("user:call", ({ to, offer }) => {
@@ -55,6 +60,23 @@ io.on("connection", (socket) => {
   socket.on("peer:nego:done", ({ to, ans }) => {
     console.log("peer:nego:done", ans);
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
+  });
+  socket.on("disconnect", () => {
+    console.log("user disconnected", socket.id);
+    rooms.forEach((users, room) => {
+      // Filter out the disconnected user
+      const updatedUsers = users.filter((user) => user.socketId !== socket.id);
+
+      // If no users remain in the room, you can delete the room
+      if (updatedUsers.length === 0) {
+        rooms.delete(room);
+      } else {
+        rooms.set(room, updatedUsers);
+
+        // Notify other users in the room that a user has disconnected
+        io.to(room).emit("user:disconnected", { socketId: socket.id });
+      }
+    });
   });
 });
 
