@@ -14,7 +14,7 @@ import ReactPlayer from "react-player";
 import WatingToJoin from "@/components/room/wating-to-join";
 import { PhoneOff, Ellipsis, Mic, MicOff } from "lucide-react";
 import ChatControlBox from "@/components/chat-control/chat-control-box";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 export interface SocketUser {
   name?: string;
@@ -25,6 +25,7 @@ export interface SocketUser {
 const CallRoomPage = () => {
   const socket = useSocket();
   const { state } = useLocation();
+  const { roomId } = useParams();
 
   const [micOn, setMicOn] = useState(true);
   const [otherUser, setOtherUser] = useState<SocketUser | null>(null);
@@ -54,8 +55,8 @@ const CallRoomPage = () => {
   }, []);
 
   useEffect(() => {
-    socket.emit("get:all:user", { mySocketId: myInfo?.socketId });
-  }, [myInfo?.socketId, socket]);
+    socket.emit("get:all:user", { roomId });
+  }, [roomId, socket]);
 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
@@ -131,41 +132,9 @@ const CallRoomPage = () => {
     }
   }, [state]);
 
-  useEffect(() => {
-    if (myStream && peer.peer) {
-      addStreamTracksToPeerConnection(myStream, peer.peer);
-    }
-  }, [myStream]);
-
-  function addStreamTracksToPeerConnection(
-    stream: MediaStream,
-    peerConnection: RTCPeerConnection,
-  ) {
-    stream.getTracks().forEach((track) => {
-      const senders = peerConnection.getSenders();
-      const isTrackAlreadyAdded = senders.some(
-        (sender) => sender.track === track,
-      );
-
-      if (!isTrackAlreadyAdded) {
-        peerConnection.addTrack(track, stream);
-      }
-    });
-  }
-
-  useEffect(() => {
-    return () => {
-      // Clean up streams and peer connection when the component unmounts
-      peer.peer.close();
-    };
-  }, []);
-
   const micHandler = () => {
     setMicOn(!micOn);
   };
-
-  console.log("otherUser===", otherUser);
-  console.log("myInfo===", myInfo);
 
   return (
     <>

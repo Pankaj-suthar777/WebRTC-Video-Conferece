@@ -17,7 +17,11 @@ const variants: Variants = {
   },
 };
 
-const BarLoader = () => {
+interface Props {
+  colorClass: string;
+}
+
+const BarLoader = ({ colorClass = "bg-white" }: Props) => {
   return (
     <motion.div
       transition={{
@@ -27,19 +31,19 @@ const BarLoader = () => {
       animate="animate"
       className="flex gap-1"
     >
-      <motion.div variants={variants} className="h-12 w-2 bg-white" />
-      <motion.div variants={variants} className="h-12 w-2 bg-white" />
-      <motion.div variants={variants} className="h-12 w-2 bg-white" />
-      <motion.div variants={variants} className="h-12 w-2 bg-white" />
-      <motion.div variants={variants} className="h-12 w-2 bg-white" />
+      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
     </motion.div>
   );
 };
 
-const BarLoaderComponent = () => {
+const BarLoaderComponent = ({ colorClass }: Props) => {
   return (
     <div className="grid place-content-center px-4 py-24">
-      <BarLoader />
+      <BarLoader colorClass={colorClass} />
     </div>
   );
 };

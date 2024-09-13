@@ -5,16 +5,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import BarLoaderComponent from "../layout/bar-loader-component";
-import { Button } from "../ui/button";
 import { SocketUser } from "@/pages/private-room/call-room/call-room-page";
 
 interface Props {
   otherUser: SocketUser | null;
-  handleCallUser: () => void;
+  handleCallUser?: () => void;
   remoteStream: any;
 }
 
-const WatingToJoin = ({ otherUser, handleCallUser, remoteStream }: Props) => {
+const WatingToJoin = ({ otherUser, remoteStream }: Props) => {
   const show = !remoteStream || !otherUser;
 
   return (
@@ -29,20 +28,7 @@ const WatingToJoin = ({ otherUser, handleCallUser, remoteStream }: Props) => {
             </DialogTitle>
           </DialogHeader>
 
-          {!otherUser ? (
-            <BarLoaderComponent />
-          ) : (
-            otherUser?.isHost === false && (
-              <Button
-                onClick={() => {
-                  handleCallUser();
-                  setTimeout(handleCallUser, 1000);
-                }}
-              >
-                Accept call
-              </Button>
-            )
-          )}
+          {!otherUser && <BarLoaderComponent colorClass="bg-indigo-600" />}
         </DialogContent>
       </Dialog>
     </div>

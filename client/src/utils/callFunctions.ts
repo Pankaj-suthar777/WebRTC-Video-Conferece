@@ -31,7 +31,11 @@ export const useSendStreams = (myStream: MediaStream) => {
   return useCallback(() => {
     if (myStream) {
       for (const track of myStream.getTracks()) {
-        peer.peer.addTrack(track, myStream);
+        try {
+          peer.peer.addTrack(track, myStream);
+        } catch (error) {
+          console.log(error);
+        }
       }
     }
   }, [myStream]);
