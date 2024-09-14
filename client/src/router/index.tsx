@@ -1,6 +1,6 @@
 import { Keys } from "@/@types/keys";
 import client from "@/api/client";
-import useAuthStore from "@/store/authSlice";
+import useAuthStore from "@/store/authStore";
 import { useEffect, useState } from "react";
 import publicRoutes from "./routes/publicRoutes";
 import privateRoutes from "./routes/privateRoutes";

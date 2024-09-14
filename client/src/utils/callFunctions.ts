@@ -1,6 +1,7 @@
 import peer from "@/service/peer";
 import { useCallback } from "react";
 import { useSocket } from "@/context/SocketProvider";
+import { SocketUser } from "@/pages/private-room/call-room/call-room-page";
 
 interface OtherUser {
   name?: string;
@@ -113,5 +114,31 @@ export const useHandleIncommingCall = (
       socket.emit("call:accepted", { to: from, ans });
     },
     [otherUser, setOtherUser, setMyStream, socket],
+  );
+};
+
+export const useHandleAllUsers = ({
+  myInfo,
+  otherUser,
+  setOtherUser,
+}: {
+  myInfo: SocketUser | null;
+  otherUser: SocketUser | null;
+  setOtherUser: React.Dispatch<React.SetStateAction<SocketUser | null>>;
+}) => {
+  return useCallback(
+    async (data: any) => {
+      const { all_users } = data;
+
+      if (!myInfo) return;
+      if (!otherUser) {
+        all_users?.map((user: SocketUser) => {
+          if (user.socketId !== myInfo?.socketId) {
+            setOtherUser(user);
+          }
+        });
+      }
+    },
+    [myInfo, otherUser, setOtherUser],
   );
 };

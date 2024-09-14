@@ -2,7 +2,7 @@ import { Button } from "@/components/custom/button";
 import useCreatePrivateRoom from "@/hooks/mutations/room/useCreatePrivateRoom";
 import { useAuthenticatedTask } from "@/hooks/use-authticated-task";
 import { toast } from "@/hooks/use-toast";
-import useModalStore from "@/store/modalSlice";
+import useModalStore from "@/store/modalStore";
 
 const CreateRoomSection = ({
   createRoomFunction,

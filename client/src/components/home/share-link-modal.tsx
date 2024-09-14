@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Loader from "../layout/loader";
 import { toast } from "@/hooks/use-toast";
-import useModalStore from "@/store/modalSlice";
+import useModalStore from "@/store/modalStore";
 
 interface ModalsProps {
   loading: boolean;

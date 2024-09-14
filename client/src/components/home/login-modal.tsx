@@ -5,18 +5,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserAuthForm } from "@/pages/auth/login/user-auth-form";
-import useAuthStore from "@/store/authSlice";
-import useModalStore from "@/store/modalSlice";
+import useAuthStore from "@/store/authStore";
+import useModalStore from "@/store/modalStore";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const LoginModal = () => {
   const { isAuthenticated } = useAuthStore();
   const { loginModalOpen, setLoginModalOpen } = useModalStore();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    setLoginModalOpen(!isAuthenticated);
-  }, [isAuthenticated, setLoginModalOpen]);
+    if (pathname === "/") {
+      setLoginModalOpen(!isAuthenticated);
+    }
+  }, [isAuthenticated, setLoginModalOpen, pathname]);
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "@/store/authSlice";
-import useModalStore from "@/store/modalSlice";
+import useAuthStore from "@/store/authStore";
+import useModalStore from "@/store/modalStore";
 import { toast } from "@/hooks/use-toast";
 
 export const useAuthenticatedTask = () => {

@@ -6,6 +6,7 @@ import {
   useHandleNegoNeedFinal,
   useHandleCallUser,
   useHandleIncommingCall,
+  useHandleAllUsers,
 } from "@/utils/callFunctions";
 import { useSocket } from "@/context/SocketProvider";
 import peer from "@/service/peer";
@@ -45,6 +46,11 @@ const CallRoomPage = () => {
     setMyStream,
     socket,
   );
+  const handleAllUsers = useHandleAllUsers({
+    myInfo,
+    otherUser,
+    setOtherUser,
+  });
 
   useEffect(() => {
     peer.peer.addEventListener("track", async (ev: any) => {
@@ -64,19 +70,7 @@ const CallRoomPage = () => {
     socket.on("call:accepted", handleCallAccepted);
     socket.on("peer:nego:needed", handleNegoNeedIncomming);
     socket.on("peer:nego:final", handleNegoNeedFinal);
-    socket.on("all:user", (data: any) => {
-      const { all_users } = data;
-      console.log("useruser", all_users[0]);
-
-      if (!myInfo) return;
-      if (!otherUser) {
-        all_users?.[0].map((user: SocketUser) => {
-          if (user.socketId !== myInfo?.socketId) {
-            setOtherUser(user);
-          }
-        });
-      }
-    });
+    socket.on("all:user", handleAllUsers);
 
     return () => {
       socket.off("user:joined", handleUserJoined);
@@ -84,19 +78,10 @@ const CallRoomPage = () => {
       socket.off("call:accepted", handleCallAccepted);
       socket.off("peer:nego:needed", handleNegoNeedIncomming);
       socket.off("peer:nego:final", handleNegoNeedFinal);
-      socket.off("all:user", (data: any) => {
-        const { all_users } = data;
-
-        if (!otherUser) {
-          all_users?.map((user: SocketUser) => {
-            if (user.socketId !== myInfo?.socketId) {
-              setOtherUser(user);
-            }
-          });
-        }
-      });
+      socket.off("all:user", handleAllUsers);
     };
   }, [
+    handleAllUsers,
     handleCallAccepted,
     handleIncommingCall,
     handleNegoNeedFinal,
@@ -192,7 +177,7 @@ const CallRoomPage = () => {
           </div>
         </div>
         <div className="hidden h-full overflow-hidden p-4 md:block">
-          <ChatControlBox />
+          <ChatControlBox showNextButton={false} />
         </div>
       </div>
       <WatingToJoin

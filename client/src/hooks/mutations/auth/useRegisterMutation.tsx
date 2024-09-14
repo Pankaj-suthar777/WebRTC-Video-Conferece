@@ -1,7 +1,7 @@
 import client from "@/api/client";
 import { useState } from "react";
 import { toast } from "../../use-toast";
-import useAuthStore from "@/store/authSlice";
+import useAuthStore from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
 import { Keys } from "@/@types/keys";
 
