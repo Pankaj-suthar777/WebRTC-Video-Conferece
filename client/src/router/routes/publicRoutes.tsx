@@ -7,11 +7,16 @@ import HomePage from "@/pages/home/home-page";
 import { SocketProvider } from "@/context/SocketProvider";
 import JoinRoomPage from "@/pages/private-room/join-page/join-room-page";
 import CallRoomPage from "@/pages/private-room/call-room/call-room-page";
+import CallTestPage from "@/pages/test-page";
 
 const publicRoutes = [
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/test",
+    element: <CallTestPage />,
   },
   {
     path: "/login",

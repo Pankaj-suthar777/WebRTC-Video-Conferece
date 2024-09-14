@@ -5,16 +5,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import BarLoaderComponent from "../layout/bar-loader-component";
+import { Button } from "../ui/button";
 import { SocketUser } from "@/pages/private-room/call-room/call-room-page";
+import { useEffect } from "react";
 
 interface Props {
   otherUser: SocketUser | null;
-  handleCallUser?: () => void;
+  handleCallUser: () => void;
   remoteStream: any;
 }
 
-const WatingToJoin = ({ otherUser, remoteStream }: Props) => {
+const WatingToJoin = ({ otherUser, handleCallUser, remoteStream }: Props) => {
   const show = !remoteStream || !otherUser;
+
+  useEffect(() => {
+    const call = () => {
+      handleCallUser();
+      setTimeout(handleCallUser, 1000);
+    };
+    if (otherUser?.isHost === true) {
+      call();
+    }
+  }, [handleCallUser, otherUser?.isHost]);
 
   return (
     <div>
@@ -28,7 +40,20 @@ const WatingToJoin = ({ otherUser, remoteStream }: Props) => {
             </DialogTitle>
           </DialogHeader>
 
-          {!otherUser && <BarLoaderComponent colorClass="bg-indigo-600" />}
+          {!otherUser ? (
+            <BarLoaderComponent className="bg-indigo-600" />
+          ) : (
+            otherUser?.isHost === false && (
+              <Button
+                onClick={() => {
+                  handleCallUser();
+                  setTimeout(handleCallUser, 1000);
+                }}
+              >
+                Accept call
+              </Button>
+            )
+          )}
         </DialogContent>
       </Dialog>
     </div>

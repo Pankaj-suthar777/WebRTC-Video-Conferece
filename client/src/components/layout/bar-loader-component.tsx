@@ -1,4 +1,5 @@
 import { motion, Variants } from "framer-motion";
+import { HTMLProps } from "react";
 
 const variants: Variants = {
   initial: {
@@ -18,10 +19,10 @@ const variants: Variants = {
 };
 
 interface Props {
-  colorClass: string;
+  className?: HTMLProps<HTMLElement>["className"];
 }
 
-const BarLoader = ({ colorClass = "bg-white" }: Props) => {
+const BarLoader = ({ className = "bg-white" }: Props) => {
   return (
     <motion.div
       transition={{
@@ -31,19 +32,19 @@ const BarLoader = ({ colorClass = "bg-white" }: Props) => {
       animate="animate"
       className="flex gap-1"
     >
-      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
-      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
-      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
-      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
-      <motion.div variants={variants} className={`h-12 w-2 ${colorClass}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${className}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${className}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${className}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${className}`} />
+      <motion.div variants={variants} className={`h-12 w-2 ${className}`} />
     </motion.div>
   );
 };
 
-const BarLoaderComponent = ({ colorClass }: Props) => {
+const BarLoaderComponent = ({ className }: Props) => {
   return (
     <div className="grid place-content-center px-4 py-24">
-      <BarLoader colorClass={colorClass} />
+      <BarLoader className={className} />
     </div>
   );
 };
