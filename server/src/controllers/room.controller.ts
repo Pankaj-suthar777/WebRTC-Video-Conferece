@@ -1,10 +1,9 @@
 import roomModel from "#/model/room.model";
 import { v4 as uuidv4 } from "uuid";
 import { RequestHandler } from "express";
-import { CreateRoom } from "#/@types/room";
 import { CLIENT_URL } from "#/utils/variables";
 
-export const create_room: RequestHandler = async (req: CreateRoom, res) => {
+export const create_room: RequestHandler = async (req, res) => {
   const host = req.user.id;
 
   try {

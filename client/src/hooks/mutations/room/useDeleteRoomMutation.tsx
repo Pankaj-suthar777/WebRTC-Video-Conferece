@@ -18,11 +18,9 @@ const useDeleteRoomMutation = () => {
         ["my-rooms"],
         (oldData: any) => {
           const filterRooms = oldData?.rooms?.filter((r: any) => r._id !== _id);
-          console.log("filterRooms", filterRooms);
-          console.log("oldData.rooms", oldData.rooms);
 
           return { rooms: filterRooms };
-        }
+        },
       );
     },
   });
