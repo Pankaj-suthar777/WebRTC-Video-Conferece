@@ -18,8 +18,8 @@ import ChatControlBox from "@/components/chat-control/chat-control-box";
 import { useLocation, useParams } from "react-router-dom";
 
 export interface SocketUser {
-  name?: string;
-  socketId?: string;
+  name: string;
+  socketId: string;
   isHost?: boolean;
 }
 

@@ -4,27 +4,34 @@ import { Input } from "../ui/input";
 import { colors } from "@/constant/colors";
 import useSendMessageMutation from "@/hooks/mutations/message/useSendMessage";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import useMySocketInfoStore from "@/store/mySocketInfo";
 
 const MessageInputSubmit = () => {
   const [text, setText] = useState("");
-  const { mutate, isLoading } = useSendMessageMutation();
   const { roomId } = useParams();
 
-  const submitHandler = () => {
-    if (!roomId) return;
+  const { mutate, isLoading } = useSendMessageMutation();
+  const { mySocketInfo } = useMySocketInfoStore();
 
-    mutate({ roomId, text });
+  const submitHandler = (e: FormEvent) => {
+    e.preventDefault();
+    if (!roomId || !mySocketInfo) return;
+    const { isHost, name, socketId } = mySocketInfo;
+
+    mutate({ roomId, text, isHost, name, socketId });
+    setText("");
   };
 
   return (
     <>
-      <form onSubmit={submitHandler}>
+      <form onSubmit={submitHandler} className="flex w-full">
         <Input
           type="text"
           className="mx-4 flex-grow text-lg md:h-[45px]"
           placeholder="Type a message..."
           onChange={(e) => setText(e.target.value)}
+          value={text}
         />
         <Button
           style={{ backgroundColor: colors.primary }}

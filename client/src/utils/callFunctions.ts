@@ -4,8 +4,8 @@ import { useSocket } from "@/context/SocketProvider";
 import { SocketUser } from "@/pages/private-room/call-room/call-room-page";
 
 interface OtherUser {
-  name?: string;
-  socketId?: string;
+  name: string;
+  socketId: string;
   isHost?: boolean;
 }
 
@@ -102,7 +102,8 @@ export const useHandleIncommingCall = (
   socket: ReturnType<typeof useSocket>,
 ) => {
   return useCallback(
-    async ({ from, offer }: any) => {
+    async ({ from, offer }: { from: string; offer: any }) => {
+      if (otherUser === null) return;
       setOtherUser({ ...otherUser, socketId: from });
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,

@@ -5,5 +5,5 @@ export interface Message {
   socketId: string;
   name: string;
   isHost: boolean;
-  createdAt: Date;
+  createdAt: string;
 }
