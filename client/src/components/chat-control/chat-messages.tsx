@@ -1,12 +1,42 @@
+import { Message } from "@/@types/message";
+import { useSocket } from "@/context/SocketProvider";
 import { useGetRoomMessages } from "@/hooks/query/message-query";
 import useMySocketInfoStore from "@/store/mySocketInfo";
 import moment from "moment";
+import { useEffect, useRef } from "react";
+import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 
 const ChatMessages = () => {
   const { roomId } = useParams();
   const { data } = useGetRoomMessages(roomId);
   const { mySocketInfo } = useMySocketInfoStore();
+
+  const socket = useSocket();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    socket.on("newMessage", (newMessage: Message) => {
+      queryClient.setQueryData<{ messages: Message[] }>(
+        ["messages", roomId],
+        (data: any) => {
+          const newMessagesArray = [...data.messages, newMessage];
+          return { messages: newMessagesArray };
+        },
+      );
+    });
+    return () => {
+      socket.off("newMessage");
+    };
+  });
+
+  const lastMessageRef = useRef<any>();
+
+  useEffect(() => {
+    setTimeout(() => {
+      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -18,6 +48,7 @@ const ChatMessages = () => {
               ? "justify-end"
               : "justify-start"
           }`}
+          ref={lastMessageRef}
         >
           <div className={`mb-4 flex max-w-[80%] flex-col space-y-1`}>
             {/* Sender name and timestamp */}

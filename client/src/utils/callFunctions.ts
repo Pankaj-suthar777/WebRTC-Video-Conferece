@@ -143,3 +143,20 @@ export const useHandleAllUsers = ({
     [myInfo, otherUser, setOtherUser],
   );
 };
+
+export const useHandleRemoveDisconnectedUser = ({
+  otherUser,
+  setOtherUser,
+}: {
+  otherUser: SocketUser | null;
+  setOtherUser: React.Dispatch<React.SetStateAction<SocketUser | null>>;
+}) => {
+  return useCallback(
+    async ({ socketId }: { socketId: string }) => {
+      if (socketId || otherUser?.socketId === socketId) {
+        setOtherUser(null);
+      }
+    },
+    [otherUser?.socketId, setOtherUser],
+  );
+};

@@ -7,6 +7,7 @@ import {
   useHandleCallUser,
   useHandleIncommingCall,
   useHandleAllUsers,
+  useHandleRemoveDisconnectedUser,
 } from "@/utils/callFunctions";
 import { useSocket } from "@/context/SocketProvider";
 import peer from "@/service/peer";
@@ -51,6 +52,10 @@ const CallRoomPage = () => {
     otherUser,
     setOtherUser,
   });
+  const handleRemovedDisconnectedUser = useHandleRemoveDisconnectedUser({
+    otherUser,
+    setOtherUser,
+  });
 
   useEffect(() => {
     peer.peer.addEventListener("track", async (ev: any) => {
@@ -71,6 +76,7 @@ const CallRoomPage = () => {
     socket.on("peer:nego:needed", handleNegoNeedIncomming);
     socket.on("peer:nego:final", handleNegoNeedFinal);
     socket.on("all:user", handleAllUsers);
+    socket.on("user:disconnected", handleRemovedDisconnectedUser);
 
     return () => {
       socket.off("user:joined", handleUserJoined);
@@ -79,6 +85,7 @@ const CallRoomPage = () => {
       socket.off("peer:nego:needed", handleNegoNeedIncomming);
       socket.off("peer:nego:final", handleNegoNeedFinal);
       socket.off("all:user", handleAllUsers);
+      socket.off("user:disconnected", handleRemovedDisconnectedUser);
     };
   }, [
     handleAllUsers,
@@ -86,6 +93,7 @@ const CallRoomPage = () => {
     handleIncommingCall,
     handleNegoNeedFinal,
     handleNegoNeedIncomming,
+    handleRemovedDisconnectedUser,
     handleUserJoined,
     myInfo,
     myInfo?.socketId,
@@ -176,7 +184,7 @@ const CallRoomPage = () => {
             </div>
           </div>
         </div>
-        <div className="hidden h-full overflow-hidden p-4 md:block">
+        <div className="hidden h-full overflow-hidden px-4 md:block">
           <ChatControlBox showNextButton={false} />
         </div>
       </div>

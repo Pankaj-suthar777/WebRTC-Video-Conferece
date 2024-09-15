@@ -45,11 +45,6 @@ const useSendMessageMutation = () => {
         },
       );
     },
-    onSuccess: (data: any) => {
-      toast({
-        title: data.message,
-      });
-    },
 
     onError: (error: any) => {
       toast({

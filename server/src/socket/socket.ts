@@ -2,6 +2,9 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { CLIENT_URL } from "#/utils/variables";
+import messageModel from "#/model/message.model";
+import roomModel from "#/model/room.model";
+import historyModal from "#/model/history.modal";
 
 const app = express();
 
@@ -15,8 +18,23 @@ const io = new Server(server, {
 
 const rooms = new Map();
 
+export interface RoomUser {
+  name: string;
+  socketId: string;
+  isHost: boolean;
+}
+
+export const getReceiverUser = (
+  roomId: string,
+  senderSocketId: string
+): RoomUser => {
+  const room = rooms.get(roomId);
+  if (!room) return;
+  const otherUser = room.find((u: RoomUser) => u.socketId !== senderSocketId);
+  return otherUser;
+};
+
 io.on("connection", (socket) => {
-  console.log(`Socket Connected`, socket.id);
   socket.on("room:join", async (data) => {
     // room => roomId
     const { name, room, isHost } = data;
@@ -63,16 +81,22 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
-    rooms.forEach((users, room) => {
+    rooms.forEach(async (users: RoomUser[], room) => {
       // Filter out the disconnected user
       const updatedUsers = users.filter((user) => user.socketId !== socket.id);
 
       // If no users remain in the room, you can delete the room
       if (updatedUsers.length === 0) {
         rooms.delete(room);
+        await messageModel.deleteMany({ roomId: room });
+        await roomModel.deleteOne({ roomId: room });
       } else {
-        rooms.set(room, updatedUsers);
+        await historyModal.create({
+          roomId: room,
+          users,
+        });
 
+        rooms.set(room, updatedUsers);
         // Notify other users in the room that a user has disconnected
         io.to(room).emit("user:disconnected", { socketId: socket.id });
       }

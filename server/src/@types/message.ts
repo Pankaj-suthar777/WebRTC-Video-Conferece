@@ -8,3 +8,10 @@ export interface CreateMessage extends Request {
     isHost?: boolean;
   };
 }
+
+export interface IMessage {
+  text: string;
+  name: string;
+  socketId: string;
+  isHost?: boolean;
+}

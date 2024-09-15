@@ -1,5 +1,6 @@
 import { CreateMessage } from "#/@types/message";
 import messageModel from "#/model/message.model";
+import { getReceiverUser, io } from "#/socket/socket";
 import { RequestHandler } from "express";
 
 export const send_message: RequestHandler = async (req: CreateMessage, res) => {
@@ -8,6 +9,15 @@ export const send_message: RequestHandler = async (req: CreateMessage, res) => {
     const { roomId } = req.params;
 
     await messageModel.create({
+      text,
+      roomId,
+      name,
+      socketId,
+      isHost,
+    });
+    const receiver = getReceiverUser(roomId, socketId);
+
+    io.to(receiver.socketId).emit("newMessage", {
       text,
       roomId,
       name,
