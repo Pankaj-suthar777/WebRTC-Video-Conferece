@@ -1,5 +1,5 @@
 class PeerService {
-  peer: any = null;
+  peer: RTCPeerConnection | null = null;
   constructor() {
     if (!this.peer) {
       this.peer = new RTCPeerConnection({

@@ -33,7 +33,7 @@ export const useSendStreams = (myStream: MediaStream) => {
     if (myStream) {
       for (const track of myStream.getTracks()) {
         try {
-          peer.peer.addTrack(track, myStream);
+          peer?.peer?.addTrack(track, myStream);
         } catch (error) {
           console.log(error);
         }

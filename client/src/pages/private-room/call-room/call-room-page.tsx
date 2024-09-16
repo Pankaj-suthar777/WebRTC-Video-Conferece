@@ -58,7 +58,7 @@ const CallRoomPage = () => {
   });
 
   useEffect(() => {
-    peer.peer.addEventListener("track", async (ev: any) => {
+    peer?.peer?.addEventListener("track", async (ev) => {
       const remoteStream = ev.streams;
 
       setRemoteStream(remoteStream[0]);
@@ -126,8 +126,12 @@ const CallRoomPage = () => {
   }, [state]);
 
   const micHandler = () => {
+    const remoteStr = (remoteStream[0].getAudioTracks()[0].enabled = true);
+    setRemoteStream(remoteStr);
     setMicOn(!micOn);
   };
+
+  // remoteStream[0].getAudioTracks()[0].enabled = true;
 
   return (
     <>

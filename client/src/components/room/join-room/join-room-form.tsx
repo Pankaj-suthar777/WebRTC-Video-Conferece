@@ -42,7 +42,7 @@ const JoinRoomForm = () => {
   const handleJoinRoom = useCallback(
     (data: SocketRoomResponse) => {
       const { room, name, socketId } = data;
-      setMySocketInfo({ isHost: isImHost, name, socketId });
+      setMySocketInfo({ isHost: isImHost, name, socketId: socketId as string });
       navigate(`/room/call-room/${room}`, {
         state: { name, isHost: isImHost, socketId },
       });

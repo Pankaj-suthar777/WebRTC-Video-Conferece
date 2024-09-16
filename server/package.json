@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsnd --respawn -r tsconfig-paths/register --pretty --transpile-only ./src/index.ts",
-    "build": "npm i && tsc && tsc-alias && npm run copy-images",
-    "copy-images": "cp -R src/mail/images dist/mail",
+    "build": "npm i && tsc && tsc-alias",
     "start": "node ./dist",
     "afterbuild": "cp package.json dist/ && cd dist && npm install --production"
   },
