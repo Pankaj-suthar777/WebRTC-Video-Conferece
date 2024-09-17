@@ -28,7 +28,7 @@ export const useHandleUserJoined = (
 };
 
 // Sends the local media streams to the peer
-export const useSendStreams = (myStream: MediaStream) => {
+export const useSendStreams = (myStream: MediaStream | null) => {
   return useCallback(() => {
     if (myStream) {
       for (const track of myStream.getTracks()) {
@@ -98,23 +98,22 @@ export const useHandleCallUser = (
 export const useHandleIncommingCall = (
   otherUser: OtherUser | null,
   setOtherUser: (user: OtherUser | null) => void,
-  setMyStream: (stream: MediaStream) => void,
   socket: ReturnType<typeof useSocket>,
 ) => {
   return useCallback(
     async ({ from, offer }: { from: string; offer: any }) => {
       if (otherUser === null) return;
       setOtherUser({ ...otherUser, socketId: from });
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      setMyStream(stream);
+      // const stream = await navigator.mediaDevices.getUserMedia({
+      //   audio: true,
+      //   video: true,
+      // });
+      // setMyStream(stream);
       console.log(`Incoming Call`, from, offer);
       const ans = await peer.getAnswer(offer);
       socket.emit("call:accepted", { to: from, ans });
     },
-    [otherUser, setOtherUser, setMyStream, socket],
+    [otherUser, setOtherUser, socket],
   );
 };
 

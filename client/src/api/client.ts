@@ -1,4 +1,6 @@
-export const baseURL = process.env.BACKEND_URL + "/api";
+// export const baseURL = process.env.BACKEND_URL + "/api";
+
+export const baseURL = "/api";
 
 import { Keys } from "@/@types/keys";
 import axios, { CreateAxiosDefaults } from "axios";
