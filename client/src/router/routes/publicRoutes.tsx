@@ -8,6 +8,7 @@ import { SocketProvider } from "@/context/SocketProvider";
 import JoinRoomPage from "@/pages/private-room/join-page/join-room-page";
 import CallRoomPage from "@/pages/private-room/call-room/call-room-page";
 import CallTestPage from "@/pages/test-page";
+import RandomRoom from "@/pages/random-room/random-room";
 
 const publicRoutes = [
   {
@@ -16,8 +17,15 @@ const publicRoutes = [
   },
   {
     path: "/test",
-    element: <CallTestPage />,
+    element: <SocketProvider />,
+    children: [{ path: "/test", element: <CallTestPage /> }],
   },
+  {
+    path: "/random",
+    element: <SocketProvider />,
+    children: [{ path: "/random/room", element: <RandomRoom /> }],
+  },
+
   {
     path: "/login",
     element: <LoginPage />,

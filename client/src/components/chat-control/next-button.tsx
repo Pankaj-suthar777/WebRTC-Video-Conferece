@@ -22,9 +22,9 @@ const NextButton = () => {
       className="hidden items-center justify-center px-10 md:flex md:h-[45px]"
     >
       {isSearchingOtherChat ? (
-        <CompassLoader height="18px" width="18px" />
+        <CompassLoader height="24px" width="24px" />
       ) : (
-        <SkipForwardIcon size={18} />
+        <SkipForwardIcon size={24} />
       )}
     </Button>
   );

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useSocket } from "@/context/SocketProvider";
 import useMySocketInfoStore from "@/store/mySocketInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Mic, MicOff, Video, VideoOff } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +26,8 @@ const formSchema = z.object({
 
 const JoinRoomForm = () => {
   const [isImHost, setIsImHost] = useState(false);
+  const [micOn, setMicOn] = useState(true);
+  const [videoOn, setVideoOn] = useState(true);
 
   const { setMySocketInfo } = useMySocketInfoStore();
   const { roomId } = useParams();
@@ -44,10 +47,16 @@ const JoinRoomForm = () => {
       const { room, name, socketId } = data;
       setMySocketInfo({ isHost: isImHost, name, socketId: socketId as string });
       navigate(`/room/call-room/${room}`, {
-        state: { name, isHost: isImHost, socketId },
+        state: {
+          name,
+          isHost: isImHost,
+          socketId,
+          isUserWantVideoOn: videoOn,
+          isUserWantMicOn: micOn,
+        },
       });
     },
-    [setMySocketInfo, isImHost, navigate],
+    [setMySocketInfo, isImHost, navigate, videoOn, micOn],
   );
 
   useEffect(() => {
@@ -105,6 +114,24 @@ const JoinRoomForm = () => {
           </Button>
         </div>
       </form>
+      <div className="flex items-center justify-center space-x-4">
+        <div
+          className="cursor-pointer rounded-full border border-slate-400 bg-red-200 p-4 shadow-md"
+          onClick={() => {
+            setVideoOn(!videoOn);
+          }}
+        >
+          {videoOn ? <Video size={24} /> : <VideoOff size={24} />}
+        </div>
+        <div
+          className="cursor-pointer rounded-full border border-slate-400 bg-red-200 p-4 shadow-md"
+          onClick={() => {
+            setMicOn(!micOn);
+          }}
+        >
+          {micOn ? <Mic size={24} /> : <MicOff size={24} />}
+        </div>
+      </div>
     </Form>
   );
 };

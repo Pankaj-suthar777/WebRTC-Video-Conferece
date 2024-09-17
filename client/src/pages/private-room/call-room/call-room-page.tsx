@@ -275,14 +275,14 @@ const CallRoomPage = () => {
   const { state } = useLocation();
   const { roomId } = useParams();
 
-  const [micOn, setMicOn] = useState(true);
-  const [videoOn, setVideoOn] = useState(true);
+  const [micOn, setMicOn] = useState(state?.isUserWantMicOn);
+  const [videoOn, setVideoOn] = useState(state?.isUserWantVideoOn);
 
   const [otherUser, setOtherUser] = useState<SocketUser | null>(null);
   const [myInfo, setMyInfo] = useState<SocketUser | null>(null);
   const [myStream, setMyStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  const [remoteVideoOn, setRemoteVideoOn] = useState(true); // Track remote video status
+  const [remoteVideoOn, setRemoteVideoOn] = useState(true);
 
   const handleUserJoined = useHandleUserJoined(setOtherUser);
   const sendStreams = useSendStreams(myStream);
@@ -368,14 +368,14 @@ const CallRoomPage = () => {
   useEffect(() => {
     // Get user media (video/audio)
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: videoOn, audio: micOn })
       .then((stream) => {
         setMyStream(stream);
       })
       .catch((error) => {
         console.error("Error accessing media devices.", error);
       });
-  }, []);
+  }, [micOn, videoOn]);
 
   // Handle toggling video
   const videoHandler = () => {
